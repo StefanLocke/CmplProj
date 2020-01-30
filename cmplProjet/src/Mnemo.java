@@ -1,3 +1,4 @@
+
 import java.io.*;
 
 /** classe permettant de passer d'un code objet MAPILE (represente par des entiers) 
