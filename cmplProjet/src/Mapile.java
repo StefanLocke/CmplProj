@@ -5,8 +5,6 @@
  *
  */
  
-package cmplProjet;
-
 public class Mapile  {
  
 
