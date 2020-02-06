@@ -143,13 +143,13 @@ effixes : '(' (expression  (',' expression  )*)? ')'
 effmods :'(' (ident  (',' ident  )*)? ')'
   ; 
   
-expression: (exp1) ('ou'  exp1  )*
+expression: (exp1) ('ou' {PtGen.pt(1);} exp1 {PtGen.pt(1);PtGen.pt(3);}  )*
   ;
   
-exp1  : exp2 ('et'  exp2  )*
+exp1  : exp2 ('et' {PtGen.pt(1);}  exp2 {PtGen.pt(1); PtGen.pt(4);} )*
   ;
   
-exp2  : 'non' exp2 
+exp2  : 'non' exp2 {PtGen.pt(1);PtGen.pt(5);}
   | exp3  
   ;
   
@@ -164,27 +164,27 @@ exp3  : exp4
   ;
   
 exp4  : exp5 
-        ('+'  exp5 
-        |'-'  exp5 
+        ('+' {PtGen.pt(2);} exp5  {PtGen.pt(2);}
+        |'-' {PtGen.pt(2);} exp5  {PtGen.pt(2);}
         )*
   ;
   
 exp5  : primaire 
-        (    '*'   primaire 
-          | 'div'  primaire 
+        (    '*'  {PtGen.pt(2);}  primaire  {PtGen.pt(2);}
+          | 'div' {PtGen.pt(2);}  primaire  {PtGen.pt(2);}
         )*
   ;
   
-primaire: valeur 
-  | ident  
+primaire: valeur  {PtGen.pt(6);}
+  | ident   {PtGen.pt(11);}
   | '(' expression ')'
   ;
   
-valeur  : nbentier 
-  | '+' nbentier 
-  | '-' nbentier 
-  | 'vrai' 
-  | 'faux' 
+valeur  : nbentier {PtGen.pt(7);}
+  | '+' nbentier {PtGen.pt(7);}
+  | '-' nbentier {PtGen.pt(8);}
+  | 'vrai' {PtGen.pt(9);}
+  | 'faux' {PtGen.pt(10);}
   ;
 
 // partie lexicale  : cette partie ne doit pas etre modifiee  //

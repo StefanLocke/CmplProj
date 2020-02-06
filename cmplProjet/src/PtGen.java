@@ -223,7 +223,56 @@ public class PtGen {
 		case 0:
 			initialisations();
 			break;
-
+		case 1: verifBool();break; // verif si le type de vCour (tCour) est un boolean
+		case 2: verifEnt();break; // verif si le type de vCour (tCour) est un entier
+		
+		case 3: po.produire(5);break; // produire le code de ou 
+		case 4: po.produire(6);break; // produire le code de et 
+		case 5: po.produire(7);break; // produire le code de non 
+		
+		case 6: po.produire(7);break; // produire le code de empiler
+		
+		case 7: po.produire(vCour);break; // produire le code d'un argument en utilisant vCour
+		case 8: po.produire(-vCour);break;// produire le code d'un argument en utilisant -vCour
+		
+		case 9: po.produire(1);break; // produire le code d'un argument pour vrai
+		case 10: po.produire(0);break;// produire le code d'un argument pour faux
+		
+		case 11:
+			int i = presentIdent(1);
+			if (i > 0) {
+				po.produire(3);
+				po.produire(tabSymb[i].info);
+			}
+			else {
+				UtilLex.messErr("variable not initialised");
+			}
+			break;
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		// TODO
 		
 		default:
