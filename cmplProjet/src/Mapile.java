@@ -1,4 +1,3 @@
-
 /**
  * La classe Mapile permet l'execution de la machine a pile virtuelle MAPILE
  *  
