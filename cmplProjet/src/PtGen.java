@@ -226,30 +226,52 @@ public class PtGen {
 		case 1: verifBool();break; // verif si le type de vCour (tCour) est un boolean
 		case 2: verifEnt();break; // verif si le type de vCour (tCour) est un entier
 		
-		case 3: po.produire(5);break; // produire le code de ou 
-		case 4: po.produire(6);break; // produire le code de et 
-		case 5: po.produire(7);break; // produire le code de non 
+		case 3: po.produire(OU);break; // produire le code de ou 
+		case 4: po.produire(ET);break; // produire le code de et 
+		case 5: po.produire(NON);break; // produire le code de non 
 		
-		case 6: po.produire(7);break; // produire le code de empiler
+		case 6:po.produire(EMPILER);po.produire(vCour);break; // produire le code de empiler
 		
-		case 7: po.produire(vCour);break; // produire le code d'un argument en utilisant vCour
-		case 8: po.produire(-vCour);break;// produire le code d'un argument en utilisant -vCour
+		case 7: vCour=UtilLex.valEnt;tCour = ENT;break; // affecter vCour et tCour a l'entier courrant
+		case 8: vCour=-UtilLex.valEnt;tCour = ENT;break;// affecter vCour et tCour a l'entier negatif courrant
 		
-		case 9: po.produire(1);break; // produire le code d'un argument pour vrai
-		case 10: po.produire(0);break;// produire le code d'un argument pour faux
+		case 9: vCour = 1; tCour = BOOL;break;  // affecter vCour et tCour au bool courrant
+		case 10: vCour = 0; tCour = BOOL;break; // affecter vCour et tCour au bool courrant
 		
 		case 11:
 			int i = presentIdent(1);
 			if (i > 0) {
-				po.produire(3);
-				po.produire(tabSymb[i].info);
+				switch (tabSymb[i].categorie) {
+					case VARGLOBALE : { // production du code pour un ident qui signifie une var glob
+						po.produire(CONTENUG);
+						po.produire(tabSymb[i].info);  
+						break;
+					}
+					case CONSTANTE : { 	// production du code pour un ident qui signifie une constante
+						po.produire(EMPILER);
+						po.produire(tabSymb[i].info);
+						break;
+					}
+					
+				}
+				
 			}
 			else {
 				UtilLex.messErr("variable not initialised");
 			}
 			break;
+			
+		case 12:po.produire(MUL);break;// produire le code de MUL 
+		case 13:po.produire(DIV);break;// produire le code de DIV 
+		case 14:po.produire(ADD);break;// produire le code de ADD 
+		case 15:po.produire(SOUS);break;// produire le code de ADD 
 		
-		
+		case 16:po.produire(EG);break;// produire le code de EG 
+		case 17:po.produire(DIFF);break;// produire le code de DIFF 
+		case 18:po.produire(SUP);break;// produire le code de SUP 
+		case 19:po.produire(SUPEG);break;// produire le code de SUPEG 
+		case 20:po.produire(INF);break;// produire le code de INF 
+		case 21:po.produire(INFEG);break;// produire le code de INFEG 
 		
 		
 		
