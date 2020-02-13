@@ -1,4 +1,3 @@
-// Grammaire du langage PROJET
 // CMPL L3info 
 // Nathalie Girard, Anne Grazon, Veronique Masson
 // il convient d'y inserer les appels a {PtGen.pt(k);}
@@ -41,7 +40,7 @@ unite  :   unitprog  EOF
 unitprog
   : 'programme' ident ':'  
      declarations  
-     corps { System.out.println("succes, arret de la compilation "); }
+     corps {PtGen.pt(255);System.out.println("succes, arret de la compilation ");}
   ;
   
 unitmodule
@@ -110,7 +109,7 @@ instruction
   | lecture
   | ecriture
   | affouappel
-  |
+  | expression
   ;
   
 inssi : 'si' expression 'alors' instructions ('sinon'  instructions)? 'fsi' 
@@ -155,7 +154,7 @@ exp2  : 'non' exp2 {PtGen.pt(1);PtGen.pt(5);}
   
 exp3  : exp4 
   ( '='   {PtGen.pt(2);} exp4 {PtGen.pt(2);PtGen.pt(16);}
-  | '<>'  {PtGen.pt(2);} exp4 PtGen.pt(2);{PtGen.pt(17);}
+  | '<>'  {PtGen.pt(2);} exp4 {PtGen.pt(2);PtGen.pt(17);}
   | '>'   {PtGen.pt(2);} exp4 {PtGen.pt(2);PtGen.pt(18);}
   | '>='  {PtGen.pt(2);} exp4 {PtGen.pt(2);PtGen.pt(19);}
   | '<'   {PtGen.pt(2);} exp4 {PtGen.pt(2);PtGen.pt(20);}
@@ -163,10 +162,10 @@ exp3  : exp4
   ) ?
   ;
   
-exp4  : exp5 
-        ('+' {PtGen.pt(2);} exp5  {PtGen.pt(2);PtGen.pt(14);}
-        |'-' {PtGen.pt(2);} exp5  {PtGen.pt(2);PtGen.pt(15);}
-        )*
+exp4  : exp5
+('+' {PtGen.pt(2);} exp5  {PtGen.pt(2);PtGen.pt(14);}
+|'-' {PtGen.pt(2);} exp5  {PtGen.pt(2);PtGen.pt(15);}
+)*
   ;
   
 exp5  : primaire 
@@ -217,7 +216,3 @@ COMMENT
 // commentaires sur plusieurs lignes
 ML_COMMENT    :   '/*' (options {greedy=false;} : .)* '*/' {$channel=HIDDEN;}
     ;	   
-
-
-
-	   

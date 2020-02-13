@@ -243,17 +243,16 @@ public class PtGen {
 			if (i > 0) {
 				switch (tabSymb[i].categorie) {
 					case VARGLOBALE : { // production du code pour un ident qui signifie une var glob
-						po.produire(CONTENUG);
-						po.produire(tabSymb[i].info);  
+						po.produire(CONTENUG);		
 						break;
 					}
 					case CONSTANTE : { 	// production du code pour un ident qui signifie une constante
-						po.produire(EMPILER);
-						po.produire(tabSymb[i].info);
+						po.produire(EMPILER);	
 						break;
-					}
-					
+					}		
 				}
+				po.produire(tabSymb[i].info);
+				tCour = tabSymb[i].type;
 				
 			}
 			else {
@@ -266,12 +265,19 @@ public class PtGen {
 		case 14:po.produire(ADD);break;// produire le code de ADD 
 		case 15:po.produire(SOUS);break;// produire le code de ADD 
 		
-		case 16:po.produire(EG);break;// produire le code de EG 
-		case 17:po.produire(DIFF);break;// produire le code de DIFF 
-		case 18:po.produire(SUP);break;// produire le code de SUP 
-		case 19:po.produire(SUPEG);break;// produire le code de SUPEG 
-		case 20:po.produire(INF);break;// produire le code de INF 
-		case 21:po.produire(INFEG);break;// produire le code de INFEG 
+		case 16:po.produire(EG);tCour = BOOL;break;// produire le code de EG 
+		case 17:po.produire(DIFF);tCour = BOOL;break;// produire le code de DIFF 
+		case 18:po.produire(SUP);tCour = BOOL;break;// produire le code de SUP 
+		case 19:po.produire(SUPEG);tCour = BOOL;break;// produire le code de SUPEG 
+		case 20:po.produire(INF);tCour = BOOL;break;// produire le code de INF 
+		case 21:po.produire(INFEG);tCour = BOOL;break;// produire le code de INFEG 
+		
+		
+		case 22:/*{ switch (tCour) { // case pour ecriture
+					case BOOL: po.produire(ECRBOOL);
+					case ENT : po.produire(ECRENT);
+			
+		}*/break;
 		
 		
 		
@@ -289,12 +295,12 @@ public class PtGen {
 		
 		
 		
-		
-		
-		
-		
-		
-		
+		case 255:{ 	afftabSymb();
+					po.constGen();
+					po.constObj();
+					break;
+					}
+				
 		// TODO
 		
 		default:
