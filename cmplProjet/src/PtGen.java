@@ -122,7 +122,8 @@ public class PtGen {
     private static int tCour; // type de l'expression compilee
     private static int vCour; // sert uniquement lors de la compilation d'une valeur (entiere ou boolenne)
   
-   
+    private static int nbVars = 0;
+    private static int oldIdent = 0;
     // TABLE DES SYMBOLES
     // ------------------
     //
@@ -238,7 +239,7 @@ public class PtGen {
 		case 9: vCour = 1; tCour = BOOL;break;  // affecter vCour et tCour au bool courrant
 		case 10: vCour = 0; tCour = BOOL;break; // affecter vCour et tCour au bool courrant
 		
-		case 11:
+		case 11:{
 			int i = presentIdent(1);
 			if (i > 0) {
 				switch (tabSymb[i].categorie) {
@@ -256,9 +257,9 @@ public class PtGen {
 				
 			}
 			else {
-				UtilLex.messErr("variable not initialised");
+				UtilLex.messErr("variable not declared");
 			}
-			break;
+			break;}
 			
 		case 12:po.produire(MUL);break;// produire le code de MUL 
 		case 13:po.produire(DIV);break;// produire le code de DIV 
@@ -273,11 +274,96 @@ public class PtGen {
 		case 21:po.produire(INFEG);tCour = BOOL;break;// produire le code de INFEG 
 		
 		
-		case 22:/*{ switch (tCour) { // case pour ecriture
-					case BOOL: po.produire(ECRBOOL);
-					case ENT : po.produire(ECRENT);
+		case 22:{ // CODE AFFECTATION
+			if (tCour != tabSymb[oldIdent].type) {
+				UtilLex.messErr("non matching type");
+			}
+			else
+			{
+				po.produire(AFFECTERG);
+				po.produire(tabSymb[oldIdent].info);
+			} 
+			break;
+		}
+		
+		case 30: {
+			int i = presentIdent(1);
+			if (i > 0) {
+				if(tabSymb[i].categorie == CONSTANTE) {
+					UtilLex.messErr("Affectation a constante");
+				}
+				else {
+					oldIdent = i;
+				}
+			}
+			else {
+				UtilLex.messErr("variable not declared");
+			}
+		}
+		
+		case 23: { // code ecrire
+			if (tCour == ENT) {
+				po.produire(ECRENT);
+			}
+			if (tCour == BOOL) {
+				po.produire(ECRBOOL);
+			}	
 			
-		}*/break;
+			break;
+		}
+		
+		case 24: { // lire
+			int i = presentIdent(1);
+			if (i > 0 ) {
+				if (tabSymb[i].type == ENT) {
+					po.produire(LIRENT);
+					po.produire(AFFECTERG);
+					po.produire(tabSymb[i].info);
+				}
+				if (tabSymb[i].type == BOOL) {
+					po.produire(LIREBOOL);
+					po.produire(AFFECTERG);
+					po.produire(tabSymb[i].info);
+				}
+			}
+			break;
+		}
+			
+		case 25: {
+			int i = presentIdent(1);
+			if (i == 0) {
+				placeIdent(UtilLex.numIdCourant,CONSTANTE, tCour, vCour);
+			}
+			else {
+				UtilLex.messErr("Constant already declared");
+			}
+			break;
+		}
+		
+		case 26: {
+			int i = presentIdent(1);
+			if (i == 0) {
+				placeIdent(UtilLex.numIdCourant,VARGLOBALE, tCour,nbVars);
+				nbVars++;
+				po.produire(RESERVER);
+				po.produire(1); //TODO optimise
+			}
+			else {
+				UtilLex.messErr("variable already declared");
+			}
+			break;
+		}
+		
+		case 27: {
+			tCour = BOOL;
+			break;
+		}
+			
+		case 28: {
+			tCour = ENT;
+			break;
+		}
+
 		
 		
 		
@@ -295,6 +381,10 @@ public class PtGen {
 		
 		
 		
+		
+		case 254: {
+			afftabSymb();
+		}
 		case 255:{ 	afftabSymb();
 					po.constGen();
 					po.constObj();

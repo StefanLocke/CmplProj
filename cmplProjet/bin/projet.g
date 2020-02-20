@@ -49,7 +49,7 @@ unitmodule
   ;
   
 declarations
-  : partiedef? partieref? consts? vars? decprocs? 
+  : partiedef? partieref? consts? vars?   decprocs? 
   ;
   
 partiedef
@@ -63,14 +63,14 @@ specif  : ident  ( 'fixe' '(' type  ( ',' type  )* ')' )?
                  ( 'mod'  '(' type  ( ',' type  )* ')' )? 
   ;
   
-consts  : 'const' ( ident  '=' valeur  ptvg  )+ 
+consts  : 'const' ( ident  '=' valeur {PtGen.pt(25);} ptvg  )+ 
   ;
   
-vars  : 'var' ( type ident  ( ','  ident  )* ptvg  )+
+vars  : 'var' ( type ident  {PtGen.pt(26);}  ( ','  ident  {PtGen.pt(26);}  )* ptvg  )+
   ;
   
-type  : 'ent'  
-  |     'bool' 
+type  : 'ent'   {PtGen.pt(28);} 
+  |     'bool' 	{PtGen.pt(27);} 
   ;
   
 decprocs: (decproc ptvg)+
@@ -109,7 +109,7 @@ instruction
   | lecture
   | ecriture
   | affouappel
-  | expression
+  | 
   ;
   
 inssi : 'si' expression 'alors' instructions ('sinon'  instructions)? 'fsi' 
@@ -124,14 +124,13 @@ inscond : 'cond'  expression  ':' instructions
 boucle  : 'ttq'  expression 'faire' instructions 'fait' 
   ;
   
-lecture: 'lire' '(' ident  ( ',' ident  )* ')' 
+lecture: 'lire' '(' ident  {PtGen.pt(24);} ( ',' ident  {PtGen.pt(24);} )* ')' 
   ;
   
-ecriture: 'ecrire' '(' expression  ( ',' expression  )* ')'
+ecriture: 'ecrire' '(' expression {PtGen.pt(23);}  ( ',' expression {PtGen.pt(23);} )* ')'
    ;
   
-affouappel
-  : ident  (    ':=' expression 
+affouappel: ident  (    ':='  {PtGen.pt(30);} expression {PtGen.pt(22);}
             |   (effixes (effmods)?)?  
            )
   ;
