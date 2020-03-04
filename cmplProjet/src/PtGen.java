@@ -482,7 +482,8 @@ public class PtGen {
 		case 254: {
 			afftabSymb();
 		}
-		case 255:{ 	afftabSymb();
+		case 255:{ 	po.produire(ARRET);
+					afftabSymb();
 					po.constGen();
 					po.constObj();
 					break;
