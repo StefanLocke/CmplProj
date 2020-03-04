@@ -1,0 +1,50 @@
+FICHIER tests/TDexo5-cond.gen : 
+
+   1  reserver        1
+   3  reserver        1
+   5  reserver        1
+   7  reserver        1
+   9  reserver        1
+  11  reserver        1
+  13  lirebool  
+  14  affecterg       0
+  16  lirebool  
+  17  affecterg       1
+  19  lirebool  
+  20  affecterg       2
+  22  lirebool  
+  23  affecterg       3
+  25  lirebool  
+  26  affecterg       4
+  28  lirebool  
+  29  affecterg       5
+  31  contenug        0
+  33  bsifaux        40
+  35  empiler         1
+  37  ecrent    
+  38  bincond        85
+  40  contenug        1
+  42  bsifaux        76
+  44  contenug        2
+  46  bsifaux        53
+  48  empiler         2
+  50  ecrent    
+  51  bincond        74
+  53  contenug        3
+  55  bsifaux        62
+  57  empiler         3
+  59  ecrent    
+  60  bincond        74
+  62  contenug        4
+  64  bsifaux        71
+  66  empiler         4
+  68  ecrent    
+  69  bincond        74
+  71  empiler         5
+  73  ecrent    
+  74  bincond        85
+  76  contenug        5
+  78  bsifaux        85
+  80  empiler         6
+  82  ecrent    
+  83  bincond        85

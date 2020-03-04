@@ -1,0 +1,35 @@
+FICHIER tests/TDexo3-sittq.gen : 
+
+   1  reserver        1
+   3  reserver        1
+   5  reserver        1
+   7  lirent    
+   8  affecterg       1
+  10  contenug        1
+  12  affecterg       2
+  14  lirent    
+  15  affecterg       0
+  17  contenug        0
+  19  empiler        -1
+  21  diff      
+  22  bsifaux        53
+  24  contenug        0
+  26  contenug        2
+  28  sup       
+  29  bsifaux        37
+  31  contenug        0
+  33  affecterg       2
+  35  bincond        48
+  37  contenug        0
+  39  contenug        1
+  41  inf       
+  42  bsifaux        48
+  44  contenug        0
+  46  affecterg       1
+  48  lirent    
+  49  affecterg       0
+  51  bincond        17
+  53  contenug        1
+  55  ecrent    
+  56  contenug        2
+  58  ecrent    

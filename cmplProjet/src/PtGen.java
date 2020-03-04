@@ -21,6 +21,7 @@
 
 
 import java.io.*;
+import java.io.ObjectInputStream.GetField;
 
 /**
  * classe de mise en oeuvre du compilateur
@@ -366,7 +367,12 @@ public class PtGen {
 		}
 		
 		
-		case 29: { // bsifaux pour le si
+		/**
+		 * Produit un BSIFAUX et sont argm a 00 
+		 * Et empile l'indice de l'argument dans la pile de reprise
+		 */
+		
+		case 29: {
 			po.produire(BSIFAUX);
 			po.produire(00);
 			pileRep.empiler(po.getIpo());
@@ -387,6 +393,76 @@ public class PtGen {
 		}
 		
 		
+		/**
+		 * Stock l'adresse code que l'on va ajouter apres le ipo courrant
+		 * Utiliser pour une boucle, on met dans la pile l'index de la condition
+		 */
+		case 33: {
+			
+			pileRep.empiler(po.getIpo() + 1);
+			break;
+		}
+		
+		/**
+		 * Case pour retourner au debut de boucle
+		 * cree le code BINCOND avec arg index de la condition
+		 */
+		
+		case 34 : {
+			po.produire(BINCOND);
+			
+			int indexBcondarg = pileRep.depiler();
+			int indexCond = pileRep.depiler();
+			
+			po.produire(indexCond);
+			po.modifier(indexBcondarg, po.getIpo()+1);
+			
+	
+			break;
+		}
+		
+		/**Case debut de cond
+		 * 
+		 */
+		case 35 : {
+			pileRep.empiler(0);
+			
+			break;
+		}
+		
+		
+		
+		case 36 : {
+			int indiceBsifauxarg = pileRep.depiler();
+			int indiceChaine = pileRep.depiler();
+			po.produire(BINCOND);
+			po.produire(indiceChaine);		
+			pileRep.empiler(po.getIpo());
+			po.modifier(indiceBsifauxarg,po.getIpo()+1);
+			break;
+		}
+		
+		
+		/**
+		 * case autre non present
+		 */
+		case 37 : { 
+			int indiceBsifauxarg = pileRep.depiler();
+			po.modifier(indiceBsifauxarg,po.getIpo()+1);
+			break;
+		}
+		
+		case 38 : {
+			int nextInstr = po.getIpo()+1;
+			int dep = pileRep.depiler();
+			do {
+			int nextdep = po.getElt(dep);
+			po.modifier(dep,nextInstr);
+			dep = nextdep;
+			}while (dep != 0);
+			
+			break;
+		}
 		
 		
 		
