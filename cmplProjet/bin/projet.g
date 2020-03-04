@@ -49,7 +49,7 @@ unitmodule
   ;
   
 declarations
-  : partiedef? partieref? consts? vars?   decprocs? 
+  : partiedef? partieref? consts? vars?  decprocs? 
   ;
   
 partiedef
@@ -112,7 +112,7 @@ instruction
   | 
   ;
   
-inssi : 'si' expression 'alors' instructions ('sinon'  instructions)? 'fsi' 
+inssi : 'si' expression {PtGen.pt(1);PtGen.pt(29);}  'alors' instructions {PtGen.pt(31);} ( 'sinon'  instructions)? 'fsi' {PtGen.pt(32);} 
   ;
   
 inscond : 'cond'  expression  ':' instructions 

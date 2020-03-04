@@ -1,6 +1,6 @@
 /*********************************************************************************
  * VARIABLES ET METHODES FOURNIES PAR LA CLASSE UtilLex (cf libClass_Projet)     *
- *       complement à l'ANALYSEUR LEXICAL produit par ANTLR                      *
+ *       complement à l'ANALYSEUR LEXICAL produit par ANTLR                     *
  *                                                                               *
  *                                                                               *
  *   nom du programme compile, sans suffixe : String UtilLex.nomSource           *
@@ -286,7 +286,7 @@ public class PtGen {
 			break;
 		}
 		
-		case 30: {
+		case 30: { //pre afeect
 			int i = presentIdent(1);
 			if (i > 0) {
 				if(tabSymb[i].categorie == CONSTANTE) {
@@ -299,6 +299,7 @@ public class PtGen {
 			else {
 				UtilLex.messErr("variable not declared");
 			}
+			break;
 		}
 		
 		case 23: { // code ecrire
@@ -363,7 +364,27 @@ public class PtGen {
 			tCour = ENT;
 			break;
 		}
+		
+		
+		case 29: { // bsifaux pour le si
+			po.produire(BSIFAUX);
+			po.produire(00);
+			pileRep.empiler(po.getIpo());
+			break;
+		}
 
+		case 31: { // reprise de si
+			po.produire(BINCOND);
+			po.produire(00);
+			po.modifier(pileRep.depiler(),po.getIpo()+1);
+			pileRep.empiler(po.getIpo());
+			break;
+		}
+		
+		case 32: { // fin si
+			po.modifier(pileRep.depiler(),po.getIpo()+1);
+			break;
+		}
 		
 		
 		
