@@ -76,7 +76,7 @@ type  : 'ent'   {PtGen.pt(28);}
 decprocs: (decproc ptvg)+
   ;
   
-decproc :  'proc'  ident {PtGen.pt(39);} parfixe? parmod? {//count amount of params} consts? vars? corps 
+decproc :  'proc'  ident {PtGen.pt(39);} parfixe? parmod? {PtGen.pt(42);} consts? vars? corps {PtGen.pt(43);}
   ;
   
 ptvg  : ';'
@@ -95,7 +95,7 @@ pf  : type ident {PtGen.pt(40);} ( ',' ident {PtGen.pt(40);} )*
 parmod  : 'mod' '(' pm ( ';' pm)* ')'
   ;
   
-pm  : type ident {PtGen.pt(40);}  ( ',' ident {PtGen.pt(40);} )*
+pm  : type ident {PtGen.pt(41);}  ( ',' ident {PtGen.pt(41);} )*
   ;
   
 instructions

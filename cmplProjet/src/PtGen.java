@@ -343,10 +343,17 @@ public class PtGen {
 			break;
 		}
 		
+		
+		/*
+		 * adding new var to table ident
+		 * modded to support local vars
+		 * 
+		 */
 		case 26: {
-			int i = presentIdent(1);
+			int i = presentIdent(bc);
 			if (i == 0) {
-				placeIdent(UtilLex.numIdCourant,VARGLOBALE, tCour,nbVars);
+				
+				placeIdent(UtilLex.numIdCourant,(bc == 1 )?VARGLOBALE:VARLOCALE, tCour,nbVars);
 				nbVars++;
 				po.produire(RESERVER);
 				po.produire(1); //TODO optimise
@@ -482,13 +489,16 @@ public class PtGen {
 			pileRep.empiler(po.getIpo());
 			placeIdent(UtilLex.numIdCourant,PROC,NEUTRE, po.getIpo());
 			placeIdent(-1,PRIVEE,NEUTRE,0);
+			bc = it+1;
 			break;
 		}
 		/**
 		 * COUNTER FOR AMOUNT OF PARAMS
 		 */
 		case 40: {
-			placeIdent(UtilLex.numIdCourant,tCour,PARAMFIXE,nbParams++);
+			afftabSymb();
+			placeIdent(UtilLex.numIdCourant,PARAMFIXE,tCour,nbParams++);
+			afftabSymb();
 			break;
 		}
 		/**
@@ -496,10 +506,24 @@ public class PtGen {
 		 * 
 		 */
 		case 41 : {
-		
+			afftabSymb();
+			placeIdent(UtilLex.numIdCourant,PARAMMOD,tCour,nbParams++);
+			afftabSymb();
 			break;
 		}
 		
+		
+		case 42 : {
+			System.out.println(bc + "**");
+			System.out.println(it + "*it*");
+			tabSymb[bc-1].info = nbParams;
+			break;
+		}
+		
+		case 43 : {
+			po.modifier(pileRep.depiler(), po.getIpo()+1);
+			break;
+		}
 		
 		
 		
