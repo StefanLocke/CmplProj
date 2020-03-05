@@ -125,6 +125,7 @@ public class PtGen {
   
     private static int nbVars = 0;
     private static int oldIdent = 0;
+    private static int nbParams = 0;
     // TABLE DES SYMBOLES
     // ------------------
     //
@@ -469,10 +470,35 @@ public class PtGen {
 			break;
 		}
 		
+		/***************************************
+		 * PROCEDURES
+		 * *************************************		
+		 */
 		
+		case 39 : {
+			nbParams = 0;
+			po.produire(BINCOND);
+			po.produire(00);
+			pileRep.empiler(po.getIpo());
+			placeIdent(UtilLex.numIdCourant,PROC,NEUTRE, po.getIpo());
+			placeIdent(-1,PRIVEE,NEUTRE,0);
+			break;
+		}
+		/**
+		 * COUNTER FOR AMOUNT OF PARAMS
+		 */
+		case 40: {
+			placeIdent(UtilLex.numIdCourant,tCour,PARAMFIXE,nbParams++);
+			break;
+		}
+		/**
+		 * Insert into tabSymb amount of params
+		 * 
+		 */
+		case 41 : {
 		
-		
-		
+			break;
+		}
 		
 		
 		
