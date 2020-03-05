@@ -22,7 +22,7 @@ FICHIER tests/TDexo5-cond.gen :
   33  bsifaux        40
   35  empiler         1
   37  ecrent    
-  38  bincond        85
+  38  bincond        83
   40  contenug        1
   42  bsifaux        76
   44  contenug        2
@@ -42,9 +42,9 @@ FICHIER tests/TDexo5-cond.gen :
   69  bincond        74
   71  empiler         5
   73  ecrent    
-  74  bincond        85
+  74  bincond        83
   76  contenug        5
-  78  bsifaux        85
+  78  bsifaux        83
   80  empiler         6
   82  ecrent    
-  83  bincond        85
+  83  arret     

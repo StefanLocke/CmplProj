@@ -1,0 +1,36 @@
+FICHIER tests/polyP29-exo3b.gen : 
+
+   1  reserver        1
+   3  reserver        1
+   5  reserver        1
+   7  empiler         0
+   9  affecterg       1
+  11  empiler         0
+  13  affecterg       2
+  15  lirent    
+  16  affecterg       0
+  18  contenug        0
+  20  empiler        -1
+  22  diff      
+  23  bsifaux        53
+  25  contenug        0
+  27  empiler        12
+  29  eg        
+  30  bsifaux        41
+  32  contenug        1
+  34  empiler         1
+  36  add       
+  37  affecterg       1
+  39  bincond        48
+  41  contenug        2
+  43  empiler         1
+  45  add       
+  46  affecterg       2
+  48  lirent    
+  49  affecterg       0
+  51  bincond        18
+  53  contenug        1
+  55  ecrent    
+  56  contenug        2
+  58  ecrent    
+  59  arret     

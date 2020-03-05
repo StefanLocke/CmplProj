@@ -425,12 +425,13 @@ public class PtGen {
 		 * 
 		 */
 		case 35 : {
-			pileRep.empiler(0);
-			
+			pileRep.empiler(0);		
 			break;
 		}
 		
-		
+		/**
+		 * case autre + next case
+		 */
 		
 		case 36 : {
 			int indiceBsifauxarg = pileRep.depiler();
@@ -444,14 +445,18 @@ public class PtGen {
 		
 		
 		/**
-		 * case autre non present
-		 */
+		 *case no autre
+		 **/
 		case 37 : { 
 			int indiceBsifauxarg = pileRep.depiler();
 			po.modifier(indiceBsifauxarg,po.getIpo()+1);
 			break;
 		}
 		
+		/**
+		 * fcond
+		 * 
+		 */
 		case 38 : {
 			int nextInstr = po.getIpo()+1;
 			int dep = pileRep.depiler();
@@ -492,8 +497,7 @@ public class PtGen {
 		// TODO
 		
 		default:
-			System.out
-					.println("Point de generation non prevu dans votre liste");
+			System.out.println("Point de generation non prevu dans votre liste");
 			break;
 
 		}
