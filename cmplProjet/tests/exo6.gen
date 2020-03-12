@@ -1,0 +1,40 @@
+FICHIER tests/exo6.gen : 
+
+   1  reserver        3
+   3  bincond        44
+   5  reserver        1
+   7  lirent    
+   8  affecterl       5   0
+  11  contenul        5   0
+  14  empiler         0
+  16  sup       
+  17  bsifaux        44
+  19  contenug        0
+  21  contenul        0   0
+  24  add       
+  25  contenul        5   0
+  28  add       
+  29  affecterl       2   1
+  32  contenul        2   1
+  35  contenul        5   0
+  38  empileradl      2   1
+  41  appel           5   3
+  44  retour          3
+  46  bincond        68
+  48  reserver        1
+  50  lirent    
+  51  affecterl       3   0
+  54  empiler        10
+  56  contenug        1
+  58  contenul        3   0
+  61  add       
+  62  empileradl      0   1
+  65  appel           5   3
+  68  retour          1
+  70  lirent    
+  71  affecterg       0
+  73  lirent    
+  74  affecterg       1
+  76  empileradg      2
+  78  appel          48   1
+  81  arret     

@@ -118,7 +118,7 @@ public class PtGen {
     // -------------------------
     
  // MERCI de renseigner ici un nom pour le trinome, constitue EXCLUSIVEMENT DE LETTRES
-    public static String trinome="XxxYyyZzz"; 
+    public static String trinome="SL - MS - GM"; 
     
     private static int tCour; // type de l'expression compilee
     private static int vCour; // sert uniquement lors de la compilation d'une valeur (entiere ou boolenne)
@@ -126,6 +126,9 @@ public class PtGen {
     private static int nbVars = 0;
     private static int oldIdent = 0;
     private static int nbParams = 0;
+    private static int procIdent = 0;
+    private static int nbParamsappel = 0;
+    
     // TABLE DES SYMBOLES
     // ------------------
     //
@@ -212,6 +215,14 @@ public class PtGen {
 	
 		// initialisation du type de l'expression courante
 		tCour = NEUTRE;
+		
+		
+		
+		//our inits : 
+		nbVars = 0;
+	 	oldIdent = 0;
+		nbParams = 0;
+		procIdent = 0;
 
 	} // initialisations
 
@@ -242,19 +253,43 @@ public class PtGen {
 		case 10: vCour = 0; tCour = BOOL;break; // affecter vCour et tCour au bool courrant
 		
 		case 11:{
-			int i = presentIdent(1);
+			int i = presentIdent(bc);
+			if (i == 0) {
+				i = presentIdent(1);
+			}
 			if (i > 0) {
 				switch (tabSymb[i].categorie) {
 					case VARGLOBALE : { // production du code pour un ident qui signifie une var glob
-						po.produire(CONTENUG);		
+						po.produire(CONTENUG);	
+						po.produire(tabSymb[i].info);
+						tCour = tabSymb[i].type;
 						break;
 					}
 					case CONSTANTE : { 	// production du code pour un ident qui signifie une constante
 						po.produire(EMPILER);	
+						po.produire(tabSymb[i].info);
+						tCour = tabSymb[i].type;
 						break;
-					}		
+					}
+					case VARLOCALE : {
+						po.produire(CONTENUL);
+						po.produire(tabSymb[i].info);
+						po.produire(0);
+						break;
+					}
+					case PARAMFIXE : {
+						po.produire(CONTENUL);
+						po.produire(tabSymb[i].info);
+						po.produire(0);
+						break;
+					}
+					case PARAMMOD : {
+						po.produire(CONTENUL);
+						po.produire(tabSymb[i].info);
+						po.produire(1);
+						break;
+					}
 				}
-				po.produire(tabSymb[i].info);
 				tCour = tabSymb[i].type;
 				
 			}
@@ -282,14 +317,30 @@ public class PtGen {
 			}
 			else
 			{
-				po.produire(AFFECTERG);
-				po.produire(tabSymb[oldIdent].info);
+				if (bc == 1 ) {
+					po.produire(AFFECTERG);
+					po.produire(tabSymb[oldIdent].info);
+				}
+				else 
+				{
+					if (tabSymb[oldIdent].categorie != PARAMFIXE) {
+						po.produire(AFFECTERL);
+						po.produire(tabSymb[oldIdent].info);
+						po.produire((tabSymb[oldIdent].categorie == VARLOCALE)?0:1);
+					}
+					else {
+						UtilLex.messErr("Affectation a param fixe");
+					}
+				}
 			} 
 			break;
 		}
 		
 		case 30: { //pre afeect
-			int i = presentIdent(1);
+			int i = presentIdent(bc);
+			if (i == 0) {
+				i = presentIdent(1);
+			}
 			if (i > 0) {
 				if(tabSymb[i].categorie == CONSTANTE) {
 					UtilLex.messErr("Affectation a constante");
@@ -316,18 +367,40 @@ public class PtGen {
 		}
 		
 		case 24: { // lire
-			int i = presentIdent(1);
+			int i = presentIdent(bc);
+			if (i == 0) {
+				i = presentIdent(1);
+			}
 			if (i > 0 ) {
 				if (tabSymb[i].type == ENT) {
-					po.produire(LIRENT);
-					po.produire(AFFECTERG);
-					po.produire(tabSymb[i].info);
-				}
+					po.produire(LIRENT);			
+				}			
 				if (tabSymb[i].type == BOOL) {
 					po.produire(LIREBOOL);
-					po.produire(AFFECTERG);
-					po.produire(tabSymb[i].info);
 				}
+				switch (tabSymb[i].categorie) {
+					case VARGLOBALE : {
+						po.produire(AFFECTERG);
+						po.produire(tabSymb[i].info);
+						break;
+					}
+					case VARLOCALE : {
+						po.produire(AFFECTERL);
+						po.produire(tabSymb[i].info);
+						po.produire(0);
+						break;
+					}
+					case PARAMMOD : {
+						po.produire(AFFECTERL);
+						po.produire(tabSymb[i].info);
+						po.produire(1);
+						break;
+					}
+					case PARAMFIXE : {
+						UtilLex.messErr("Lire sur un param fixe");
+						break;
+					}
+				}	
 			}
 			break;
 		}
@@ -353,15 +426,22 @@ public class PtGen {
 			int i = presentIdent(bc);
 			if (i == 0) {
 				
-				placeIdent(UtilLex.numIdCourant,(bc == 1 )?VARGLOBALE:VARLOCALE, tCour,nbVars);
+				placeIdent(UtilLex.numIdCourant,(bc == 1 )?VARGLOBALE:VARLOCALE, tCour,(bc == 1 )?nbVars:nbVars+nbParams+2);
 				nbVars++;
-				po.produire(RESERVER);
-				po.produire(1); //TODO optimise
+				/*po.produire(RESERVER);
+				po.produire(1); //TODO optimise*/
 			}
 			else {
 				UtilLex.messErr("variable already declared");
 			}
 			break;
+		}
+		
+		case 44: {	
+				po.produire(RESERVER);
+				po.produire(nbVars);
+				break;
+			
 		}
 		
 		case 27: {
@@ -487,7 +567,7 @@ public class PtGen {
 			po.produire(BINCOND);
 			po.produire(00);
 			pileRep.empiler(po.getIpo());
-			placeIdent(UtilLex.numIdCourant,PROC,NEUTRE, po.getIpo());
+			placeIdent(UtilLex.numIdCourant,PROC,NEUTRE, po.getIpo()+1);
 			placeIdent(-1,PRIVEE,NEUTRE,0);
 			bc = it+1;
 			break;
@@ -496,9 +576,7 @@ public class PtGen {
 		 * COUNTER FOR AMOUNT OF PARAMS
 		 */
 		case 40: {
-			afftabSymb();
 			placeIdent(UtilLex.numIdCourant,PARAMFIXE,tCour,nbParams++);
-			afftabSymb();
 			break;
 		}
 		/**
@@ -506,27 +584,124 @@ public class PtGen {
 		 * 
 		 */
 		case 41 : {
-			afftabSymb();
 			placeIdent(UtilLex.numIdCourant,PARAMMOD,tCour,nbParams++);
-			afftabSymb();
 			break;
 		}
 		
 		
 		case 42 : {
-			System.out.println(bc + "**");
-			System.out.println(it + "*it*");
 			tabSymb[bc-1].info = nbParams;
 			break;
 		}
 		
 		case 43 : {
 			po.modifier(pileRep.depiler(), po.getIpo()+1);
+			po.produire(RETOUR);
+			po.produire(nbParams);
+			for (int i = bc; i <= it; i++ ) {
+				tabSymb[i].code = -1;
+			}
+			bc = 1;
 			break;
 		}
 		
+		case 45: {
+			nbVars = 0;
+			break;
+		}
 		
+		case 46 : {
+			procIdent = presentIdent(1);
+			if (procIdent > 0) {
+				if (tabSymb[procIdent].categorie != PROC)
+				UtilLex.messErr("Ident est pas une procedure");
+			}
+			else {
+				UtilLex.messErr("Ident est pas present");
+			}
+			nbParamsappel = 0;
+			break;
+		}
+		 // TODO clean errors
+		case 47 : {
+			if ( nbParamsappel + 1 <= tabSymb[procIdent+1].info && tabSymb[procIdent + 2 + nbParamsappel].categorie == PARAMFIXE ) {
+				if (tabSymb[procIdent + 2 + nbParamsappel].type == tCour) {
+					nbParamsappel ++;
+				
+				
+				
+				}
+				else {
+					UtilLex.messErr("Type de parametre faux");
+				}
+			}
+			else {
+				UtilLex.messErr("trop de parametres fixes");
+			}
+			break;
+		}
 		
+		case 48 : {
+			if ( nbParamsappel + 1 <= tabSymb[procIdent+1].info) {
+				if (tabSymb[procIdent + 2 + nbParamsappel].type == tCour && tabSymb[procIdent + 2 + nbParamsappel].categorie == PARAMMOD ) {
+					nbParamsappel ++;
+					
+					int i = presentIdent(bc);
+					if (i == 0) {
+						i = presentIdent(1);
+					}
+					if (i > 0) {
+						switch (tabSymb[i].categorie) {
+							case VARGLOBALE : { // production du code pour un ident qui signifie une var glob
+								po.produire(EMPILERADG);	
+								po.produire(tabSymb[i].info);
+								tCour = tabSymb[i].type;
+								break;
+							}
+							case VARLOCALE : {
+								po.produire(EMPILERADL);
+								po.produire(tabSymb[i].info);
+								po.produire(0);
+								break;
+							}
+							case PARAMMOD : {
+								po.produire(EMPILERADL);
+								po.produire(tabSymb[i].info);
+								po.produire(1);
+								break;
+							}
+							default : {
+								UtilLex.messErr("On ne peut pas passer " + tabSymb[i].categorie + " en parametre Mod " );
+							}
+						}
+						tCour = tabSymb[i].type;
+						
+					}
+					else {
+						UtilLex.messErr("variable not declared");
+					}
+					
+					
+				
+				
+				
+				}
+				else {
+					UtilLex.messErr("Type de parametre faux");
+				}
+			}
+			else {
+				UtilLex.messErr("trop de parametres");
+			}
+			break;
+		}
+		
+		case 49 : {
+			po.produire(APPEL);
+			po.produire(tabSymb[procIdent].info);
+			po.produire(tabSymb[procIdent+1].info);
+			break;
+		}
 		
 		
 		
