@@ -168,6 +168,21 @@ public class PtGen {
 		it = it + 1;
 		tabSymb[it] = new EltTabSymb(code, cat, type, info);
 	}
+	
+	/**
+	 * enleve une case du tableau et decale toutes les case apres
+	 * @param index de la case a remove
+	 */
+	
+	private static void removeIdent(int index) {
+		for (int i = index+1;i < tabSymb.length; i++ ) {
+			tabSymb[i-1] = tabSymb[i];
+		}
+		tabSymb[it] = null;
+		it--;
+	}
+	
+	
 
 	/**
 	 *  utilitaire d'affichage de la table des symboles
@@ -562,6 +577,13 @@ public class PtGen {
 		 * *************************************		
 		 */
 		
+		
+		/**
+		 * cas qui cree le debut d'une procedure, cree un bincond qui saute a la fin de cette procedure
+		 * on initialise un compteur de parametre, qui va servir a remplire la tab de symb
+		 * 
+		 * on aurait put utiliser tabSymb[bc-1].info comme compteur
+		 */
 		case 39 : {
 			nbParams = 0;
 			po.produire(BINCOND);
@@ -572,44 +594,74 @@ public class PtGen {
 			bc = it+1;
 			break;
 		}
+		
+		
 		/**
 		 * COUNTER FOR AMOUNT OF PARAMS
+		 * incremente le nombre de parametre et l'initialise dans le tab symb 
 		 */
 		case 40: {
 			placeIdent(UtilLex.numIdCourant,PARAMFIXE,tCour,nbParams++);
 			break;
 		}
 		/**
-		 * Insert into tabSymb amount of params
-		 * 
+		 *  COUNTER FOR AMOUNT OF PARAMS
+		 * incremente le nombre de parametre et l'initialise dans le tab symb 
 		 */
 		case 41 : {
 			placeIdent(UtilLex.numIdCourant,PARAMMOD,tCour,nbParams++);
 			break;
 		}
 		
-		
+		/**
+		 * Met le nombre de parametre dans le tab symb
+		 */
 		case 42 : {
 			tabSymb[bc-1].info = nbParams;
 			break;
 		}
 		
+		/**
+		 * Cas de fin de declaration de procedures
+		 * on change l'adresse du bincond du debut de procedure a la bonne adresse
+		 * et on change le code pour tout les param a -1 
+		 * et on enleve toutes les variables du tabSymb
+		 */			
 		case 43 : {
+			
 			po.modifier(pileRep.depiler(), po.getIpo()+1);
 			po.produire(RETOUR);
 			po.produire(nbParams);
 			for (int i = bc; i <= it; i++ ) {
-				tabSymb[i].code = -1;
+				if (tabSymb[i].categorie != PARAMMOD && tabSymb[i].categorie != PARAMFIXE) {
+					removeIdent(i);
+					i--;
+				}
+				else {
+					tabSymb[i].code = -1;
+				}
 			}
 			bc = 1;
+			
 			break;
 		}
 		
+		
+		/**
+		 * initialise un compteur pour le nombres de variables dans cette procedure
+		 */
 		case 45: {
 			nbVars = 0;
 			break;
 		}
 		
+		
+		/**
+		 * debut d'un appel de procedures
+		 * On verifie si le ident est bien une procedure
+		 * Et si ident est bien present dans la table de symbole
+		 * Une fois ces verif faite, on initialise le nombre de param appele a 0
+		 */
 		case 46 : {
 			procIdent = presentIdent(1);
 			if (procIdent > 0) {
@@ -622,7 +674,13 @@ public class PtGen {
 			nbParamsappel = 0;
 			break;
 		}
-		 // TODO clean errors
+		
+		/**
+		 * Ce cas gere les param fixe
+		 * On verifie dabors si on de depasse pas le nombre de paramtre et si on depasse pas le nombre de param fixe
+		 * on verifie ensuite le type de chaque expression mis en param
+		 * si oui, on incremente le nb de parametre appele et le code est genere par la grammaire de expression
+		 */
 		case 47 : {
 			if ( nbParamsappel + 1 <= tabSymb[procIdent+1].info && tabSymb[procIdent + 2 + nbParamsappel].categorie == PARAMFIXE ) {
 				if (tabSymb[procIdent + 2 + nbParamsappel].type == tCour) {
@@ -641,69 +699,72 @@ public class PtGen {
 			break;
 		}
 		
+		/**
+		 * Cas gere les param mod
+		 * On verifie dabors si on de depasse pas le nombre de paramtre et si on depasse pas le nombre de param mod
+		 * on verifie ensuite si la variable existe
+		 * on verifie ensuite le type de chaque variable mis en param
+		 * on verifie ensuite si la categorie de la variable passe peut etre utilise comme param mod et on produit du code dependant de ca categorie
+		 */
 		case 48 : {
-			if ( nbParamsappel + 1 <= tabSymb[procIdent+1].info) {
-				if (tabSymb[procIdent + 2 + nbParamsappel].type == tCour && tabSymb[procIdent + 2 + nbParamsappel].categorie == PARAMMOD ) {
-					nbParamsappel ++;
-					
-					int i = presentIdent(bc);
-					if (i == 0) {
-						i = presentIdent(1);
-					}
-					if (i > 0) {
-						switch (tabSymb[i].categorie) {
-							case VARGLOBALE : { // production du code pour un ident qui signifie une var glob
-								po.produire(EMPILERADG);	
-								po.produire(tabSymb[i].info);
-								tCour = tabSymb[i].type;
-								break;
+			if ( nbParamsappel + 1 <= tabSymb[procIdent+1].info && tabSymb[procIdent + 2 + nbParamsappel].categorie == PARAMMOD ) {
+				int i = presentIdent(bc);
+				if (i == 0) {
+					i = presentIdent(1);
+				}
+				if (i > 0) {	
+					if (tabSymb[procIdent + 2 + nbParamsappel].type == tabSymb[i].type ) {
+						nbParamsappel ++;
+							switch (tabSymb[i].categorie) {
+								case VARGLOBALE : { // production du code pour un ident qui signifie une var glob
+									po.produire(EMPILERADG);	
+									po.produire(tabSymb[i].info);
+									tCour = tabSymb[i].type;
+									break;
+								}
+								case VARLOCALE : {
+									po.produire(EMPILERADL);
+									po.produire(tabSymb[i].info);
+									po.produire(0);
+									break;
+								}
+								case PARAMMOD : {
+									po.produire(EMPILERADL);
+									po.produire(tabSymb[i].info);
+									po.produire(1);
+									break;
+								}
+								default : {
+									UtilLex.messErr("On ne peut pas passer " + tabSymb[i].categorie + " en parametre Mod " );
+								}
 							}
-							case VARLOCALE : {
-								po.produire(EMPILERADL);
-								po.produire(tabSymb[i].info);
-								po.produire(0);
-								break;
-							}
-							case PARAMMOD : {
-								po.produire(EMPILERADL);
-								po.produire(tabSymb[i].info);
-								po.produire(1);
-								break;
-							}
-							default : {
-								UtilLex.messErr("On ne peut pas passer " + tabSymb[i].categorie + " en parametre Mod " );
-							}
+							tCour = tabSymb[i].type;
+							
 						}
-						tCour = tabSymb[i].type;
-						
+						else {
+							UtilLex.messErr("Type de parametre faux - 48");
+						}
 					}
 					else {
 						UtilLex.messErr("variable not declared");
 					}
-					
-					
-				
-				
-				
-				}
-				else {
-					UtilLex.messErr("Type de parametre faux");
-				}
 			}
 			else {
-				UtilLex.messErr("trop de parametres");
+				UtilLex.messErr("trop de parametres - 48");
 			}
 			break;
 		}
 		
+		
+		/**
+		 * Production du code de l'appel
+		 */
 		case 49 : {
 			po.produire(APPEL);
 			po.produire(tabSymb[procIdent].info);
 			po.produire(tabSymb[procIdent+1].info);
 			break;
 		}
-		
-		
 		
 		
 		

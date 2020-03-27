@@ -1,0 +1,63 @@
+FICHIER tests/polyP11-exo-deuxprocs.gen : 
+
+   1  reserver        1
+   3  bincond        50
+   5  reserver        2
+   7  empiler         3
+   9  affecterl       4   0
+  12  empiler         0
+  14  affecterl       0   1
+  17  contenul        4   0
+  20  empiler         0
+  22  sup       
+  23  bsifaux        50
+  25  lirent    
+  26  affecterl       3   0
+  29  contenul        0   1
+  32  contenul        3   0
+  35  add       
+  36  affecterl       0   1
+  39  contenul        4   0
+  42  empiler         1
+  44  sous      
+  45  affecterl       4   0
+  48  bincond        17
+  50  retour          1
+  52  bincond       116
+  54  reserver        3
+  56  contenul        0   0
+  59  affecterl       5   0
+  62  empiler         0
+  64  affecterl       6   0
+  67  contenul        5   0
+  70  empiler         0
+  72  sup       
+  73  bsifaux       110
+  75  empileradl      4   0
+  78  appel           5   1
+  81  contenul        4   0
+  84  contenul        1   0
+  87  supeg     
+  88  bsifaux        99
+  90  contenul        6   0
+  93  empiler         1
+  95  add       
+  96  affecterl       6   0
+  99  contenul        5   0
+ 102  empiler         1
+ 104  sous      
+ 105  affecterl       5   0
+ 108  bincond        67
+ 110  contenul        6   0
+ 113  affecterl       0   1
+ 116  retour          2
+ 118  lirent    
+ 119  affecterg       0
+ 121  contenug        0
+ 123  empiler         1
+ 125  add       
+ 126  empiler        10
+ 128  appel          54   2
+ 131  contenug        0
+ 133  ecrent    
+ 134  arret     
