@@ -1,0 +1,49 @@
+FICHIER tests/polyP41-exemple-m1ess1.gen : 
+
+   1  bincond         7
+   3  empiler         0
+   5  affecterg       0
+   7  retour          0
+   9  bincond        65
+  11  contenug        0
+  13  empiler         0
+  15  eg        
+  16  bsifaux        30
+  18  contenul        0   0
+  21  affecterg       1
+  23  contenul        0   0
+  26  affecterg       2
+  28  bincond        58
+  30  contenul        0   0
+  33  contenug        1
+  35  inf       
+  36  bsifaux        45
+  38  contenul        0   0
+  41  affecterg       1
+  43  bincond        58
+  45  contenul        0   0
+  48  contenug        2
+  50  sup       
+  51  bsifaux        58
+  53  contenul        0   0
+  56  affecterg       2
+  58  contenug        0
+  60  empiler         1
+  62  add       
+  63  affecterg       0
+  65  retour          1
+  67  bincond        90
+  69  contenug        0
+  71  empiler         0
+  73  diff      
+  74  bsifaux        87
+  76  contenug        0
+  78  ecrent    
+  79  contenug        1
+  81  ecrent    
+  82  contenug        2
+  84  ecrent    
+  85  bincond        90
+  87  empiler         0
+  89  ecrent    
+  90  retour          0

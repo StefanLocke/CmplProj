@@ -33,19 +33,19 @@ import java.io.FileInputStream;
 catch (RecognitionException e) {reportError (e) ; throw e ; }}
 
 
-unite  :   unitprog  EOF
-      |    unitmodule  EOF
+unite  :   {PtGen.pt(50);} unitprog  EOF
+      |    {PtGen.pt(51);} unitmodule  EOF
   ;
   
 unitprog
   : 'programme' ident ':'  
      declarations  
-     corps {PtGen.pt(255);System.out.println("succes, arret de la compilation ");}
+      {PtGen.pt(254);} corps {PtGen.pt(253);PtGen.pt(255);System.out.println("succes, arret de la compilation ");}
   ;
   
 unitmodule
   : 'module' ident ':' 
-     declarations   
+     declarations {PtGen.pt(255);System.out.println("succes, arret de la compilation ");}
   ;
   
 declarations
@@ -53,14 +53,14 @@ declarations
   ;
   
 partiedef
-  : 'def' ident  (',' ident )* ptvg
+  : 'def' ident  {PtGen.pt(52);}  (',' ident {PtGen.pt(52);} )* ptvg
   ;
   
 partieref: 'ref'  specif (',' specif)* ptvg
   ;
   
-specif  : ident  ( 'fixe' '(' type  ( ',' type  )* ')' )? 
-                 ( 'mod'  '(' type  ( ',' type  )* ')' )? 
+specif  : ident {PtGen.pt(53);PtGen.pt(54);} ( 'fixe' '(' type {PtGen.pt(55);} ( ',' type  {PtGen.pt(55);} )* ')' )? 
+                 ( 'mod'  '(' type  {PtGen.pt(56);} ( ',' type  {PtGen.pt(56);} )* ')' )? {PtGen.pt(57);}
   ;
   
 consts  : 'const' ( ident  '=' valeur {PtGen.pt(25);} ptvg  )+ 

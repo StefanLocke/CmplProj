@@ -1,0 +1,13 @@
+FICHIER tests/polyP41-exemple-m1ess1.desc :
+
+unite          module
+tailleCode     91
+tailleGlobaux  3
+nbDef          3
+nbRef          0
+nbTransExt     24
+tabDef          
+    init1  3  0
+    ajout1  11  1
+    ecr1  69  0
+tabRef          
