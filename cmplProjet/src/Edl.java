@@ -211,7 +211,7 @@ public class Edl {
 					if (transExt[i] == TRANSCODE) {
 						po[ipo] = po[ipo] + transCode[k]; // on decale l'adresse 
 					}
-					if (transExt[i] == 3) {
+					if (transExt[i] == REFEXT) {
 						po[ipo] = adFinale[k][po[ipo]]; // on donne l'adresse
 					}
 				}
@@ -221,7 +221,7 @@ public class Edl {
 		
 		
 		
-		for (int i = 1; i <= ipo ; i++) {
+		for (int i = 1; i <= ipo ; i++) { // Ecriture de po usr un fichier
 			Ecriture.ecrireInt(f2,po[i]);
 			Ecriture.ecrireStringln(f2,"");
 		}
