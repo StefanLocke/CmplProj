@@ -50,7 +50,7 @@ public class PtGen {
 	// codes MAPILE :
 	RESERVER=1,EMPILER=2,CONTENUG=3,AFFECTERG=4,OU=5,ET=6,NON=7,INF=8,
 	INFEG=9,SUP=10,SUPEG=11,EG=12,DIFF=13,ADD=14,SOUS=15,MUL=16,DIV=17,
-	BSIFAUX=18,BINCOND=19,LIRENT=20,LIREBOOL=21,ECRENT=22,ECRBOOL=23,
+	BSIFAUX=18,BINCOND=19,LIREENT=20,LIREBOOL=21,ECRENT=22,ECRBOOL=23,
 	ARRET=24,EMPILERADG=25,EMPILERADL=26,CONTENUL=27,AFFECTERL=28,
 	APPEL=29,RETOUR=30,
 
@@ -403,7 +403,7 @@ public class PtGen {
 			}
 			if (i > 0 ) {
 				if (tabSymb[i].type == ENT) {
-					po.produire(LIRENT);			
+					po.produire(LIREENT);			
 				}			
 				if (tabSymb[i].type == BOOL) {
 					po.produire(LIREBOOL);
@@ -473,7 +473,7 @@ public class PtGen {
 					po.produire(RESERVER);
 					po.produire(nbVars);
 				}
-				if (bc==1)
+				if (bc==1) // TODO Check
 					desc.setTailleGlobaux(nbVars); // modif du nombre de var globale, ce code pass dans les proc aussi donc on verif si on est dans une proc ou pas
 				break;
 			
@@ -610,13 +610,28 @@ public class PtGen {
 		 */
 		case 39 : {
 			nbParams = 0;
-			po.produire(BINCOND);
+			/*po.produire(BINCOND);
 			po.produire(00);
 			modifVecteurTrans(TRANSCODE); // TODO check
-			pileRep.empiler(po.getIpo());
+			pileRep.empiler(po.getIpo());*/
 			placeIdent(UtilLex.numIdCourant,PROC,NEUTRE, po.getIpo()+1);
-			placeIdent(-1,PRIVEE,NEUTRE,0);
+			if (desc.presentDef(UtilLex.chaineIdent(UtilLex.numIdCourant)) > 0) {
+				placeIdent(-1,DEF,NEUTRE,0);
+			}
+			else {
+				placeIdent(-1,PRIVEE,NEUTRE,0);
+			}
 			bc = it+1;
+			break;
+		}
+		
+		case 252 : {
+			if (desc.getUnite().equals("programme")) {
+				po.produire(BINCOND);
+				po.produire(00);
+				modifVecteurTrans(TRANSCODE); // TODO check
+				pileRep.empiler(po.getIpo());
+			}
 			break;
 		}
 		
@@ -659,7 +674,7 @@ public class PtGen {
 		 */			
 		case 43 : {
 			
-			po.modifier(pileRep.depiler(), po.getIpo()+1);
+			//po.modifier(pileRep.depiler(), po.getIpo()+1);
 			po.produire(RETOUR);
 			po.produire(nbParams);
 			for (int i = bc; i <= it; i++ ) {
@@ -672,6 +687,13 @@ public class PtGen {
 				}
 			}
 			bc = 1;
+			break;
+		}
+		
+		case 251 : {
+			if (desc.getUnite().equals("programme")) {
+				po.modifier(pileRep.depiler(), po.getIpo()+1);
+			}
 			break;
 		}
 		
@@ -792,7 +814,7 @@ public class PtGen {
 		case 49 : {
 			po.produire(APPEL);
 			po.produire(tabSymb[procIdent].info);
-			if (desc.presentRef(UtilLex.chaineIdent(procIdent)) > 0) {
+			if (desc.presentRef(UtilLex.chaineIdent(tabSymb[procIdent].code)) > 0) {
 				modifVecteurTrans(REFEXT); // TODO check
 			}else {
 				modifVecteurTrans(TRANSCODE); // TODO check
@@ -835,8 +857,8 @@ public class PtGen {
 		
 		case 53 : {
 			desc.ajoutRef(UtilLex.chaineIdent(UtilLex.numIdCourant));
-			placeIdent(UtilLex.numIdCourant, PROC, NEUTRE, -1);
-			placeIdent(-1, PRIVEE, NEUTRE,-1);
+			placeIdent(UtilLex.numIdCourant, PROC, NEUTRE,desc.getNbRef());
+			placeIdent(-1, REF, NEUTRE,-1);
 			break;
 		}
 		
@@ -877,7 +899,7 @@ public class PtGen {
 		case 57: {
 			int index = presentIdent(1);
 			int index2 = desc.presentRef(UtilLex.chaineIdent(UtilLex.numIdCourant));
-			tabSymb[index].info = desc.getRefNbParam(index2);
+			tabSymb[index+1].info = desc.getRefNbParam(index2);
 			break;
 		}
 		//TODO add errors
@@ -897,8 +919,11 @@ public class PtGen {
 					afftabSymb();
 					System.out.println(desc.toString());
 					desc.ecrireDesc(UtilLex.nomSource);
+					desc.lireDesc(UtilLex.nomSource);
 					po.constGen();
 					po.constObj();
+					
+					
 					break;
 					}
 				

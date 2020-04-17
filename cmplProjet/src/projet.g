@@ -40,7 +40,7 @@ unite  :   {PtGen.pt(50);} unitprog  EOF
 unitprog
   : 'programme' ident ':'  
      declarations  
-      {PtGen.pt(254);} corps {PtGen.pt(253);PtGen.pt(255);System.out.println("succes, arret de la compilation ");}
+     corps {PtGen.pt(253);PtGen.pt(255);System.out.println("succes, arret de la compilation ");}
   ;
   
 unitmodule
@@ -73,7 +73,7 @@ type  : 'ent'   {PtGen.pt(28);}
   |     'bool' 	{PtGen.pt(27);} 
   ;
   
-decprocs: (decproc ptvg)+
+decprocs: {PtGen.pt(252);}(decproc ptvg)+{PtGen.pt(251);}
   ;
   
 decproc :  'proc'  ident {PtGen.pt(39);} parfixe? parmod? {PtGen.pt(42);} consts?  {PtGen.pt(45);} vars? corps {PtGen.pt(43);}
