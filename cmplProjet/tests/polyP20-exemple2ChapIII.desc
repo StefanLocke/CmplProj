@@ -1,0 +1,10 @@
+FICHIER tests/polyP20-exemple2ChapIII.desc :
+
+unite          programme
+tailleCode     58
+tailleGlobaux  1
+nbDef          0
+nbRef          0
+nbTransExt     0
+tabDef          
+tabRef          

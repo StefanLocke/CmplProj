@@ -1,0 +1,10 @@
+FICHIER tests/polyP17-exemple1ChapIII.desc :
+
+unite          programme
+tailleCode     26
+tailleGlobaux  2
+nbDef          0
+nbRef          0
+nbTransExt     0
+tabDef          
+tabRef          

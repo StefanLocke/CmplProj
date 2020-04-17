@@ -62,13 +62,21 @@ public class Edl {
 	
 	
 	private static void initnomMod() {
-		nomMod = new String[6];
+		nomMod = new String[MAXMOD+1];
 		for (int i = 0; i<=MAXMOD ; i++ ) {
 			nomMod[i] = "";
 		}
 	}
 	
+	//*
 	
+	
+	
+	/**Searches for a proc in DicoDef
+	 * @param procName Name of proc to look for
+	 * @return <b>true</b> if procName is in DicoDef </br>
+	 *  <b>false</b> if not
+	 */
 	static public boolean dicoContains(String procName) {
 		for (int i = 1 ; i <= nbDef; i++) {
 			if (dicoDef[i].nomProc.equals(procName))
@@ -77,6 +85,9 @@ public class Edl {
 		return false;
 	}
 	
+	/**Prints dicoDef
+	 * 
+	 */
 	public static void printDico() {
 		System.out.println("----DICODEF----");
 		for (int i = 1; i <= nbDef;i++) {
@@ -84,6 +95,9 @@ public class Edl {
 		}
 	}
 	
+	/**Prints transDon and transCode
+	 * 
+	 */
 	public static void printTrans() {
 		System.out.println("----TRANS----");
 		System.out.print("TransDon : 0 ; ");
@@ -97,7 +111,9 @@ public class Edl {
 		}
 		System.out.println("");
 	}
-	
+	/**Prints adFinale
+	 * 
+	 */
 	public static void printadFinale() {
 		System.out.println("----ADFINALE----");
 		for (int i = 0 ; i <= nMod; i++) {
@@ -136,7 +152,7 @@ public class Edl {
 		nomProg = s;
 		//added
 		nomMod[0] = nomProg;
-		//added		
+		//added	 fin	
 		nMod = 0;
 		while (!s.equals("") && nMod < MAXMOD) {
 			System.out.print("nom de module " + (nMod + 1)
@@ -192,18 +208,28 @@ public class Edl {
 				
 			}
 			
-			
+			int totglob = 0;
+			for (int j = 0; j <= nMod ; j++) {
+				totglob = totglob + tabDesc[j].getTailleGlobaux();
+			}
+			if (totglob > 0) {
+				ipo++;
+				po[ipo] = 1;
+				ipo++;
+				po[ipo] = totglob;
+			}
 			for (int i = 1; i <= tabDesc[k].getTailleCode(); i++) { // on itere sur chaque int du fichier 
 				ipo++; 
 				po[ipo] = Lecture.lireInt(progIO);
-				if (ipo == 2 && po[ipo-1] == 1)  // On replace le Nombre de var globale a reserver
+			/*	if (ipo == 2 && po[ipo-1] == 1)  // On replace le Nombre de var globale a reserver
 				{
 					int totglob = 0;
 					for (int j = 0; j <= nMod ; j++) {
 						totglob = totglob + tabDesc[j].getTailleGlobaux();
 					}
 					po[ipo] = totglob;
-				}
+					FAUX
+				}*/
 				if (transExt[i] != -1) { // si cette ligne m'a pas de trans on y fait riien
 					if (transExt[i] == TRANSDON) {
 						po[ipo] = po[ipo] + transDon[k]; // on decale la donne

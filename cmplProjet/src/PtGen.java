@@ -132,7 +132,6 @@ public class PtGen {
     private static int nbParams = 0; //nb de paramt dans la procedure entraint d'etre compiler
     private static int procIdent = 0; // ident de la procedure entraint df'etre compiler 
     private static int nbParamsappel = 0; // nb de param entraint d'etre apeler 
-    private static int nbParamRef = 0; // could use nbparam mby
     
     // TABLE DES SYMBOLES
     // ------------------
@@ -243,7 +242,6 @@ public class PtGen {
 	 	oldIdent = 0;
 		nbParams = 0;
 		procIdent = 0;
-		nbParamRef = 0;
 
 	} // initialisations
 
@@ -283,7 +281,7 @@ public class PtGen {
 					case VARGLOBALE : { // production du code pour un ident qui signifie une var glob
 						po.produire(CONTENUG);	
 						po.produire(tabSymb[i].info);
-						modifVecteurTrans(TRANSDON); // TODO check
+						modifVecteurTrans(TRANSDON);
 						tCour = tabSymb[i].type;
 						break;
 					}
@@ -335,18 +333,45 @@ public class PtGen {
 		
 		case 22:{ // CODE AFFECTATION
 			if (tCour != tabSymb[oldIdent].type) {
-				UtilLex.messErr("non matching type");
+				UtilLex.messErr("Type non correct pour affectation ; case 22");
 			}
 			else
 			{
-				if (bc == 1 ) {
+				/*if (bc == 1 ) {
 					po.produire(AFFECTERG);
 					po.produire(tabSymb[oldIdent].info);
-					modifVecteurTrans(TRANSDON); // TODO check
+					modifVecteurTrans(TRANSDON);
 				}
 				else 
-				{
-					if (tabSymb[oldIdent].categorie == VARGLOBALE) {
+				{*/
+				switch (tabSymb[oldIdent].categorie) {
+					case VARGLOBALE : {
+						po.produire(AFFECTERG);
+						po.produire(tabSymb[oldIdent].info);
+						modifVecteurTrans(TRANSDON);
+						break;
+					}
+					case VARLOCALE : {
+						po.produire(AFFECTERL);
+						po.produire(tabSymb[oldIdent].info);
+						po.produire(0);
+						break;
+					}
+					case PARAMMOD : {
+						po.produire(AFFECTERL);
+						po.produire(tabSymb[oldIdent].info);
+						po.produire(1);
+						break;
+					}
+					case PARAMFIXE : {
+						UtilLex.messErr("Affectation a un PARAMFIXE ; case 22");
+						break;
+					}
+					default : {
+						UtilLex.messErr("Categorie non compatible ; case 22");
+					}
+				}
+					/*if (tabSymb[oldIdent].categorie == VARGLOBALE) {
 						po.produire(AFFECTERG);
 						po.produire(tabSymb[oldIdent].info);
 						modifVecteurTrans(TRANSDON);
@@ -360,8 +385,7 @@ public class PtGen {
 						else {
 							UtilLex.messErr("Affectation a param fixe");
 						}
-					}
-				}
+					}*/
 			} 
 			break;
 		}
@@ -373,14 +397,14 @@ public class PtGen {
 			}
 			if (i > 0) {
 				if(tabSymb[i].categorie == CONSTANTE) {
-					UtilLex.messErr("Affectation a constante");
+					UtilLex.messErr("Affectation a une CONSTANTE ; case 30");
 				}
 				else {
 					oldIdent = i;
 				}
 			}
 			else {
-				UtilLex.messErr("variable not declared");
+				UtilLex.messErr("variable not declared ; case 30");
 			}
 			break;
 		}
@@ -397,7 +421,7 @@ public class PtGen {
 		}
 		
 		case 24: { // lire
-			int i = presentIdent(bc);
+			int i = presentIdent(bc);// On cherche d'abors dans le scope de la procedure ensuite du programme/module
 			if (i == 0) {
 				i = presentIdent(1);
 			}
@@ -412,7 +436,7 @@ public class PtGen {
 					case VARGLOBALE : {
 						po.produire(AFFECTERG);
 						po.produire(tabSymb[i].info);
-						modifVecteurTrans(TRANSDON); // TODO check
+						modifVecteurTrans(TRANSDON);
 						break;
 					}
 					case VARLOCALE : {
@@ -431,6 +455,9 @@ public class PtGen {
 						UtilLex.messErr("Lire sur un param fixe");
 						break;
 					}
+					default : {
+						UtilLex.messErr("Categorie non compatible ; case 22");
+					}
 				}	
 			}
 			break;
@@ -442,7 +469,7 @@ public class PtGen {
 				placeIdent(UtilLex.numIdCourant,CONSTANTE, tCour, vCour);
 			}
 			else {
-				UtilLex.messErr("Constant already declared");
+				UtilLex.messErr("Constant already declared ; case 25");
 			}
 			break;
 		}
@@ -459,21 +486,19 @@ public class PtGen {
 				
 				placeIdent(UtilLex.numIdCourant,(bc == 1 )?VARGLOBALE:VARLOCALE, tCour,(bc == 1 )?nbVars:nbVars+nbParams+2);
 				nbVars++;
-				/*po.produire(RESERVER);
-				po.produire(1); //TODO optimise*/
 			}
 			else {
-				UtilLex.messErr("variable already declared");
+				UtilLex.messErr("variable already declared ; case 26");
 			}
 			break;
 		}
 		
 		case 44: {
-				if (desc.getUnite().equals("programme")) {
+				if ((desc.getUnite().equals("programme") && bc == 1) || (bc > 1)) {
 					po.produire(RESERVER);
 					po.produire(nbVars);
 				}
-				if (bc==1) // TODO Check
+				if (bc==1)
 					desc.setTailleGlobaux(nbVars); // modif du nombre de var globale, ce code pass dans les proc aussi donc on verif si on est dans une proc ou pas
 				break;
 			
@@ -498,7 +523,7 @@ public class PtGen {
 		case 29: {
 			po.produire(BSIFAUX);
 			po.produire(00);
-			modifVecteurTrans(TRANSCODE); // TODO check
+			modifVecteurTrans(TRANSCODE);
 			pileRep.empiler(po.getIpo());
 			break;
 		}
@@ -506,7 +531,7 @@ public class PtGen {
 		case 31: { // reprise de si
 			po.produire(BINCOND);
 			po.produire(00);
-			modifVecteurTrans(TRANSCODE); // TODO check
+			modifVecteurTrans(TRANSCODE);
 			po.modifier(pileRep.depiler(),po.getIpo()+1);
 			pileRep.empiler(po.getIpo());
 			break;
@@ -540,7 +565,7 @@ public class PtGen {
 			int indexCond = pileRep.depiler();
 			
 			po.produire(indexCond);
-			modifVecteurTrans(TRANSCODE); // TODO check
+			modifVecteurTrans(TRANSCODE);
 			po.modifier(indexBcondarg, po.getIpo()+1);
 			
 	
@@ -564,7 +589,7 @@ public class PtGen {
 			int indiceChaine = pileRep.depiler();
 			po.produire(BINCOND);
 			po.produire(indiceChaine);
-			modifVecteurTrans(TRANSCODE); // TODO check
+			modifVecteurTrans(TRANSCODE);
 			pileRep.empiler(po.getIpo());
 			po.modifier(indiceBsifauxarg,po.getIpo()+1);
 			break;
@@ -612,7 +637,7 @@ public class PtGen {
 			nbParams = 0;
 			/*po.produire(BINCOND);
 			po.produire(00);
-			modifVecteurTrans(TRANSCODE); // TODO check
+			modifVecteurTrans(TRANSCODE);
 			pileRep.empiler(po.getIpo());*/
 			placeIdent(UtilLex.numIdCourant,PROC,NEUTRE, po.getIpo()+1);
 			if (desc.presentDef(UtilLex.chaineIdent(UtilLex.numIdCourant)) > 0) {
@@ -629,7 +654,7 @@ public class PtGen {
 			if (desc.getUnite().equals("programme")) {
 				po.produire(BINCOND);
 				po.produire(00);
-				modifVecteurTrans(TRANSCODE); // TODO check
+				modifVecteurTrans(TRANSCODE);
 				pileRep.empiler(po.getIpo());
 			}
 			break;
@@ -770,7 +795,7 @@ public class PtGen {
 								case VARGLOBALE : { // production du code pour un ident qui signifie une var glob
 									po.produire(EMPILERADG);	
 									po.produire(tabSymb[i].info);
-									modifVecteurTrans(TRANSDON); // TODO check
+									modifVecteurTrans(TRANSDON);
 									tCour = tabSymb[i].type;
 									break;
 								}
@@ -808,61 +833,58 @@ public class PtGen {
 		}
 		
 		
-		/**
-		 * Production du code de l'appel
-		 */
-		case 49 : {
+		case 49 : { //Production du code de l'appel
 			po.produire(APPEL);
 			po.produire(tabSymb[procIdent].info);
-			if (desc.presentRef(UtilLex.chaineIdent(tabSymb[procIdent].code)) > 0) {
-				modifVecteurTrans(REFEXT); // TODO check
+			if (desc.presentRef(UtilLex.chaineIdent(tabSymb[procIdent].code)) > 0) { // On verifie si cette procedure est une ref
+				modifVecteurTrans(REFEXT); 
 			}else {
-				modifVecteurTrans(TRANSCODE); // TODO check
+				modifVecteurTrans(TRANSCODE); 
 			}
 			po.produire(tabSymb[procIdent+1].info);
 			break;
 		}
 		
 		/**
-		 * COMP SEPAREE
+		 * ---COMP SEPAREE---
 		 */
 		
 		
-		case 50 : {
+		
+		
+		case 50 : { // Met l'unite qui correspond dans desc 
 			desc.setUnite("programme");
 			
 			break;
 		}
 
-		case 51 : {
+		
+		case 51 : {// Met l'unite qui correspond dans desc 
 			desc.setUnite("module");
 			break;
 		}
 		
 		
 		
-		/**
-		 * ajout de une proc def
-		 */
 		
 		
-		case 52 : {
+		
+		case 52 : { //Ajout de une proc def
 			desc.ajoutDef(UtilLex.chaineIdent(UtilLex.numIdCourant));
 			break;
 		}
 		
-		/**
-		 * ajout de ref
-		 */
 		
-		case 53 : {
+		case 53 : { //Ajout de proc ref , on met dans tabSymb ses detail, avec info son rang dans desc.tabRef, et dans tabref le nb de param est mit a 0
 			desc.ajoutRef(UtilLex.chaineIdent(UtilLex.numIdCourant));
 			placeIdent(UtilLex.numIdCourant, PROC, NEUTRE,desc.getNbRef());
 			placeIdent(-1, REF, NEUTRE,-1);
+			int index = desc.presentRef(UtilLex.chaineIdent(UtilLex.numIdCourant));
+			desc.modifRefNbParam(index,0);
 			break;
 		}
 		
-		case 54 : {
+		/*case 54 : {
 			int index = desc.presentRef(UtilLex.chaineIdent(UtilLex.numIdCourant));
 			if (index != 0) {
 				desc.modifRefNbParam(index,0);
@@ -873,33 +895,46 @@ public class PtGen {
 			}
 			//nbParamRef = 0;
 			break;
-		}
-		case 55: {
+		}*/
+		
+		case 55: {//On ajoute dans tabSymb les parametre un par un
 			int index = desc.presentRef(UtilLex.chaineIdent(UtilLex.numIdCourant));
 			if (index != 0) {
 				placeIdent(-1, PARAMFIXE,tCour,desc.getRefNbParam(index));
 				desc.modifRefNbParam(index,desc.getRefNbParam(index)+1);
 			}
 			else {
-				UtilLex.messErr("nom de proc non trouve dans tabRef : case 55");
+				UtilLex.messErr("Nom de proc non trouve dans tabRef : case 55");
 			}
 			break;
 		}
-		case 56 : {
+		
+		case 56 : {//On ajoute dans tabSymb les parametre un par un
 			int index = desc.presentRef(UtilLex.chaineIdent(UtilLex.numIdCourant));
 			if (index != 0) {
 				placeIdent(-1, PARAMMOD,tCour,desc.getRefNbParam(index));
 				desc.modifRefNbParam(index,desc.getRefNbParam(index)+1);
 			}
 			else {
-				UtilLex.messErr("nom de proc non trouve dans tabRef : case 56");
+				UtilLex.messErr("Nom de proc non trouve dans tabRef : case 56");
 			}
 			break;
 		}
-		case 57: {
-			int index = presentIdent(1);
-			int index2 = desc.presentRef(UtilLex.chaineIdent(UtilLex.numIdCourant));
-			tabSymb[index+1].info = desc.getRefNbParam(index2);
+		
+		case 57: {//On change ne nombre de Param de la proc dans TabSymb
+			int tabSymbIndex = presentIdent(1);
+			if (tabSymbIndex > 0) {
+				int tabRefIndex = desc.presentRef(UtilLex.chaineIdent(UtilLex.numIdCourant));
+				if (tabRefIndex > 0) {
+					tabSymb[tabSymbIndex+1].info = desc.getRefNbParam(tabRefIndex);
+				}
+				else {
+					UtilLex.messErr("Proc non trouve dans desc.tabRef ; case 57 ");
+				}
+			}
+			else {
+				UtilLex.messErr("Proc non trouve dans TabSymb ; case 57 " );
+			}
 			break;
 		}
 		//TODO add errors
@@ -915,19 +950,18 @@ public class PtGen {
 			break;
 		}
 		case 255:{ 
+			
+			
 					desc.setTailleCode(po.getIpo());
 					afftabSymb();
 					System.out.println(desc.toString());
 					desc.ecrireDesc(UtilLex.nomSource);
-					desc.lireDesc(UtilLex.nomSource);
 					po.constGen();
 					po.constObj();
 					
 					
 					break;
 					}
-				
-		// TODO
 		
 		default:
 			System.out.println("Point de generation non prevu dans votre liste");

@@ -1,4 +1,4 @@
-// $ANTLR 3.5.2 projet.g 2020-04-14 20:40:05
+// $ANTLR 3.5.2 projet.g 2020-04-17 18:46:40
            
 import java.io.IOException;
 import java.io.DataInputStream;
@@ -461,8 +461,8 @@ public class projetParser extends Parser {
 			ident();
 			state._fsp--;
 
-			PtGen.pt(53);PtGen.pt(54);
-			// projet.g:62:46: ( 'fixe' '(' type ( ',' type )* ')' )?
+			PtGen.pt(53);
+			// projet.g:62:33: ( 'fixe' '(' type ( ',' type )* ')' )?
 			int alt10=2;
 			int LA10_0 = input.LA(1);
 			if ( (LA10_0==41) ) {
@@ -470,7 +470,7 @@ public class projetParser extends Parser {
 			}
 			switch (alt10) {
 				case 1 :
-					// projet.g:62:48: 'fixe' '(' type ( ',' type )* ')'
+					// projet.g:62:35: 'fixe' '(' type ( ',' type )* ')'
 					{
 					match(input,41,FOLLOW_41_in_specif261); 
 					match(input,10,FOLLOW_10_in_specif263); 
@@ -479,7 +479,7 @@ public class projetParser extends Parser {
 					state._fsp--;
 
 					PtGen.pt(55);
-					// projet.g:62:80: ( ',' type )*
+					// projet.g:62:67: ( ',' type )*
 					loop9:
 					while (true) {
 						int alt9=2;
@@ -490,7 +490,7 @@ public class projetParser extends Parser {
 
 						switch (alt9) {
 						case 1 :
-							// projet.g:62:82: ',' type
+							// projet.g:62:69: ',' type
 							{
 							match(input,14,FOLLOW_14_in_specif271); 
 							pushFollow(FOLLOW_type_in_specif273);
